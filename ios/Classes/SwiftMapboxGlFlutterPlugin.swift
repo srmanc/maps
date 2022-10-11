@@ -17,7 +17,8 @@ public class SwiftMapboxGlFlutterPlugin: NSObject, FlutterPlugin {
             switch methodCall.method {
             case "setHttpHeaders":
                 guard let arguments = methodCall.arguments as? [String: Any],
-                      let headers = arguments["headers"] as? [String: String]
+                      let headers = arguments["headers"] as? [String: String],
+                      let filter = arguments["filter"] as? [String]
                 else {
                     result(FlutterError(
                         code: "setHttpHeadersError",
@@ -27,6 +28,7 @@ public class SwiftMapboxGlFlutterPlugin: NSObject, FlutterPlugin {
                     result(nil)
                     return
                 }
+                // URLRequest.setHttpHeaders(headers, filter)
                 let sessionConfig = URLSessionConfiguration.default
                 sessionConfig.httpAdditionalHeaders = headers // your headers here
                 MGLNetworkConfiguration.sharedManager.sessionConfiguration = sessionConfig

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.List;
 
 class GlobalMethodHandler implements MethodChannel.MethodCallHandler {
   private static final String TAG = GlobalMethodHandler.class.getSimpleName();
@@ -92,7 +93,8 @@ class GlobalMethodHandler implements MethodChannel.MethodCallHandler {
         break;
       case "setHttpHeaders":
         Map<String, String> headers = (Map<String, String>) methodCall.argument("headers");
-        MapboxHttpRequestUtil.setHttpHeaders(headers, result);
+        List<String> filter = (List<String>) methodCall.argument("filter");
+        MapboxHttpRequestUtil.setHttpHeaders(headers, filter, result);
         break;
       case "downloadOfflineRegion":
         // Get args from caller

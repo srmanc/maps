@@ -32,11 +32,17 @@ Future<dynamic> setOffline(
       },
     );
 
-Future<void> setHttpHeaders(Map<String, String> headers) {
+/// Sets custom header specified in [headers] for uris which contain strings,
+/// specified in [filter].
+///
+/// If [filter] is omitted, headers are applied to all requests. 
+/// An non-null empty [filter] will result in no headers being applied to any request.
+Future<void> setHttpHeaders(Map<String, String> headers, {List<String>? filter}) {
   return _globalChannel.invokeMethod(
     'setHttpHeaders',
     <String, dynamic>{
       'headers': headers,
+      'filter': filter,
     },
   );
 }
