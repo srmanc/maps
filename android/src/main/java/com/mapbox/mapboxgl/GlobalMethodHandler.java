@@ -96,6 +96,10 @@ class GlobalMethodHandler implements MethodChannel.MethodCallHandler {
         List<String> filter = (List<String>) methodCall.argument("filter");
         MapboxHttpRequestUtil.setHttpHeaders(headers, filter, result);
         break;
+      case "getHttpHeaders": {
+        MapboxHttpRequestUtil.getHttpHeaders(result);
+        break;
+      }
       case "downloadOfflineRegion":
         // Get args from caller
         Map<String, Object> definitionMap = (Map<String, Object>) methodCall.argument("definition");

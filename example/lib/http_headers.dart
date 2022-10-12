@@ -40,7 +40,7 @@ class _HttpHeadersState extends State<HttpHeaders> {
 
     _random = Random();
     _customAccessToken = _getRandomAccessToken();
-    setHttpHeaders({_authorizationHeader: 'Bearer $_customAccessToken'});
+    setHttpHeaders({_authorizationHeader: 'Bearer $_customAccessToken'}, allowMutableHeadersAndFilterOnIOS: true);
 
     HttpServer.bind(_localServerAddress, _localServerPort).then((server) {
       setState(() {
@@ -102,9 +102,10 @@ class _HttpHeadersState extends State<HttpHeaders> {
                       ].toSet(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           _customAccessToken = _getRandomAccessToken();
-          setHttpHeaders({_authorizationHeader: 'Bearer $_customAccessToken'});
+          print("Reported headers: ${await getHttpHeaders(allowMutableHeadersAndFilterOnIOS: true)}");
+          setHttpHeaders({_authorizationHeader: 'Bearer $_customAccessToken'}, allowMutableHeadersAndFilterOnIOS: true);
         },
         child: Icon(Icons.refresh),
       ),

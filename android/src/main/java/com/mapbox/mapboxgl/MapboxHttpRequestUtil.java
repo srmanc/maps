@@ -11,8 +11,17 @@ abstract class MapboxHttpRequestUtil {
 
   public static void setHttpHeaders(Map<String, String> headers, List<String> filter, MethodChannel.Result result) {
     HttpRequestUtil.setOkHttpClient(getOkHttpClient(headers, filter, result).build());
+    MapboxHttpRequestUtil.headers = headers;
+    MapboxHttpRequestUtil.filter = filter;
     result.success(null);
   }
+
+  public static void getHttpHeader(MethodChannel.Result result) {
+    result(MapboxHttpRequestUtil.headers);
+  }
+
+  private static Map<String, String> headers = null;
+  private static List<String> filter = null;
 
   private static OkHttpClient.Builder getOkHttpClient(
       Map<String, String> headers, List<String> filter, MethodChannel.Result result) {
