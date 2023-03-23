@@ -689,3 +689,21 @@ class ImageSourceProperties implements SourceProperties {
     );
   }
 }
+
+class TransformRequest {
+  TransformRequest({required this.url, required this.resourceType})
+      : transformedUrl = url,
+        credentials = "include",
+        headers = {},
+        method = "GET";
+
+  final String url;
+  final String resourceType;
+
+  //* parameters
+  String transformedUrl;
+  String credentials;
+  Map<String, dynamic> headers;
+  String method;
+  bool? collectResourceTiming;
+}

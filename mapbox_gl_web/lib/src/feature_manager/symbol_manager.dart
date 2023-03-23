@@ -53,6 +53,7 @@ class SymbolManager extends FeatureManager<SymbolOptions> {
     });
 
     map.on('styleimagemissing', (event) {
+      return;
       if (event.id == '') {
         return;
       }

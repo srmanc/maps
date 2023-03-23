@@ -15,6 +15,7 @@ class MapboxMap extends StatefulWidget {
     this.accessToken,
     this.onMapCreated,
     this.onStyleLoadedCallback,
+    this.onTransformRequestCallback,
     this.gestureRecognizers,
     this.compassEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
@@ -84,6 +85,8 @@ class MapboxMap extends StatefulWidget {
   /// Called when the map style has been successfully loaded and the annotation managers have been enabled.
   /// Please note: you should only add annotations (e.g. symbols or circles) after this callback has been called.
   final OnStyleLoadedCallback? onStyleLoadedCallback;
+
+  final OnTransformRequestCallback? onTransformRequestCallback;
 
   /// The initial position of the map's camera.
   final CameraPosition initialCameraPosition;
@@ -290,6 +293,11 @@ class _MapboxMapState extends State<MapboxMap> {
             widget.onStyleLoadedCallback!();
           }
         });
+      },
+      onTransformRequestCallback: (headers) {
+        if (widget.onTransformRequestCallback != null) {
+          widget.onTransformRequestCallback!(headers);
+        }
       },
       onMapClick: widget.onMapClick,
       onUserLocationUpdated: widget.onUserLocationUpdated,

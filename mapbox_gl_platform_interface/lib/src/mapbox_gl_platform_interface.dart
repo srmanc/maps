@@ -38,6 +38,8 @@ abstract class MapboxGlPlatform {
 
   final onMapLongClickPlatform = ArgumentCallbacks<Map<String, dynamic>>();
 
+  final onTransformRequestPlatform = ArgumentCallbacks<TransformRequest>();
+
   final ArgumentCallbacks<void> onAttributionClickPlatform =
       ArgumentCallbacks<void>();
 
@@ -324,6 +326,21 @@ abstract class MapboxGlPlatform {
       {String? belowLayerId, String? sourceLayer});
 
   Future<void> addSource(String sourceId, SourceProperties properties);
+
+  //? sync methods added specifically for web
+  void setLayoutPropertySync(String layerId, String name, String value) => throw UnimplementedError('setLayoutPropertySync');
+  LatLng toLatLngSync(Point screenLocation) => throw UnimplementedError('toLatLngSync');
+  Line addLineSync(LineOptions options, [Map? data]) => throw UnimplementedError('addLineSync');
+  void updateLineSync(Line line, LineOptions changes) => throw UnimplementedError('updateLineSync');
+  Circle addCircleSync(CircleOptions options, [Map? data]) => throw UnimplementedError('addCircleSync');
+  void updateCircleSync(Circle circle, CircleOptions changes) => throw UnimplementedError('updateCircleSync');
+  void removeCircleSync(String circleId) => throw UnimplementedError('removeCircleSync');
+  void addGeoJsonSourceSync(String sourceId, Map<String, dynamic> geojson, {String? promoteId}) => throw UnimplementedError('addGeoJsonSourceSync');
+  void setGeoJsonSourceSync(String sourceId, Map<String, dynamic> geojson) => throw UnimplementedError('setGeoJsonSourceSync');
+  bool sourceExistsSync(String sourceId) => throw UnimplementedError('sourceExistsSync');
+  bool layerExistsSync(String layerId) => throw UnimplementedError('layerExistsSync');
+  bool setSourceUrlSync(String sourceId, String url) => throw UnimplementedError('setSourceUrlSync');
+  void resizeSync() => throw UnimplementedError('resizeSync');
 
   void dispose() {}
 }

@@ -14,6 +14,7 @@ typedef void OnMapLongClickCallback(Point<double> point, LatLng coordinates);
 typedef void OnAttributionClickCallback();
 
 typedef void OnStyleLoadedCallback();
+typedef void OnTransformRequestCallback(TransformRequest request);
 
 typedef void OnUserLocationUpdated(UserLocation location);
 
@@ -44,6 +45,7 @@ class MapboxMapController extends ChangeNotifier {
     required MapboxGlPlatform mapboxGlPlatform,
     required CameraPosition initialCameraPosition,
     this.onStyleLoadedCallback,
+    this.onTransformRequestCallback,
     this.onMapClick,
     this.onMapLongClick,
     this.onAttributionClick,
@@ -123,6 +125,12 @@ class MapboxMapController extends ChangeNotifier {
       }
     });
 
+    _mapboxGlPlatform.onTransformRequestPlatform.add((headers) {
+      if (onTransformRequestCallback != null) {
+        onTransformRequestCallback!(headers);
+      }
+    });
+
     _mapboxGlPlatform.onMapClickPlatform.add((dict) {
       if (onMapClick != null) {
         onMapClick!(dict['point'], dict['latLng']);
@@ -164,6 +172,7 @@ class MapboxMapController extends ChangeNotifier {
   }
 
   final OnStyleLoadedCallback? onStyleLoadedCallback;
+  final OnTransformRequestCallback? onTransformRequestCallback;
   final OnMapClickCallback? onMapClick;
   final OnMapLongClickCallback? onMapLongClick;
 
@@ -1047,6 +1056,77 @@ class MapboxMapController extends ChangeNotifier {
       throw UnimplementedError("Unknown layer type $properties");
     }
   }
+
+  //? sync methods added specifically for web
+  void setLayoutPropertySync(String layerId, String name, String value) {
+    _mapboxGlPlatform.setLayoutPropertySync(layerId, name, value);
+  }
+
+  LatLng toLatLngSync(Point screenLocation) {
+    return _mapboxGlPlatform.toLatLngSync(screenLocation);
+  }
+
+  Line addLineSync(LineOptions options, [Map? data]) {
+    final LineOptions effectiveOptions =
+        LineOptions.defaultOptions.copyWith(options);
+    final line = _mapboxGlPlatform.addLineSync(effectiveOptions, data);
+    _lines[line.id] = line;
+    return line;
+  }
+
+  void updateLineSync(Line line, LineOptions changes) {
+    assert(_lines[line.id] == line);
+    _mapboxGlPlatform.updateLineSync(line, changes);
+    line.options = line.options.copyWith(changes);
+  }
+
+  Circle addCircleSync(CircleOptions options, [Map? data]) {
+    final CircleOptions effectiveOptions =
+        CircleOptions.defaultOptions.copyWith(options);
+    final circle = _mapboxGlPlatform.addCircleSync(effectiveOptions, data);
+    _circles[circle.id] = circle;
+    return circle;
+  }
+
+  void updateCircleSync(Circle circle, CircleOptions changes) {
+    assert(_circles[circle.id] == circle);
+    _mapboxGlPlatform.updateCircleSync(circle, changes);
+    circle.options = circle.options.copyWith(changes);
+  }
+
+  void removeCircleSync(Circle circle) {
+    assert(_circles[circle.id] == circle);
+    _mapboxGlPlatform.removeCircleSync(circle.id);
+    _circles.remove(circle.id);
+  }
+
+  void addGeoJsonSourceSync(String sourceId, Map<String, dynamic> geojson,
+      {String? promoteId}) {
+    _mapboxGlPlatform.addGeoJsonSourceSync(sourceId, geojson,
+        promoteId: promoteId);
+  }
+
+  void setGeoJsonSourceSync(
+      String sourceId, Map<String, dynamic> geojson) {
+    _mapboxGlPlatform.setGeoJsonSourceSync(sourceId, geojson);
+  }
+
+  //! still async
+  void addLayerSync(
+      String sourceId, String layerId, LayerProperties properties,
+      {String? belowLayerId,
+      bool enableInteraction = true,
+      String? sourceLayer}) {
+    addLayer(sourceId, layerId, properties, belowLayerId: belowLayerId, enableInteraction: enableInteraction, sourceLayer: sourceLayer);
+  }
+
+  bool sourceExistsSync(String sourceId) => _mapboxGlPlatform.sourceExistsSync(sourceId);
+
+  bool layerExistsSync(String layerId) => _mapboxGlPlatform.layerExistsSync(layerId);
+
+  bool setSourceUrlSync(String sourceId, String url) => _mapboxGlPlatform.setSourceUrlSync(sourceId, url);
+
+  void resizeSync() => _mapboxGlPlatform.resizeSync();
 
   @override
   void dispose() {

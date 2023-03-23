@@ -64,6 +64,7 @@ class MapboxMapController extends MapboxGlPlatform
           zoom: camera['zoom'],
           bearing: camera['bearing'],
           pitch: camera['tilt'],
+          transformRequest: _onTransformRequest,
         ),
       );
       _map.on('load', _onStyleLoaded);
@@ -447,14 +448,35 @@ class MapboxMapController extends MapboxGlPlatform
     onMapStyleLoadedPlatform(null);
   }
 
+  RequestParameters? _onTransformRequest(String url, String resourceType) {
+    final request = TransformRequest(url: url, resourceType: resourceType);
+    onTransformRequestPlatform(request);
+    if (request.headers.isNotEmpty) {
+      final value = RequestParameters(
+        url: request.transformedUrl,
+        headers: request.headers,
+        credentials: request.credentials,        
+        method: request.method,
+        collectResourceTiming: request.collectResourceTiming,
+      );
+      return value;
+    }
+    return null;    
+  }
+
   void _onMapResize(Event e) {
-    Timer(Duration(microseconds: 10), () {
+    var repetitions = 10;
+    Timer.periodic(Duration(microseconds: 10), (timer) {
       var container = _map.getContainer();
       var canvas = _map.getCanvas();
       var widthMismatch = canvas.clientWidth != container.clientWidth;
       var heightMismatch = canvas.clientHeight != container.clientHeight;
       if (widthMismatch || heightMismatch) {
         _map.resize();
+      }
+      repetitions--;
+      if (repetitions == 0) {
+        timer.cancel();
       }
     });
   }
@@ -709,7 +731,13 @@ class MapboxMapController extends MapboxGlPlatform
     }
     _featureLayerIdentifiers.clear();
 
-    _map.setStyle(styleString);
+    try {
+      final styleJson = jsonDecode(styleString ?? '');
+      final styleJsObject = jsUtil.jsify(styleJson);
+      _map.setStyle(styleJsObject);
+    } catch(_) {
+      _map.setStyle(styleString);
+    }
     // catch style loaded for later style changes
     if (_mapReady) {
       _map.once("styledata", _onStyleLoaded);
@@ -923,5 +951,111 @@ class MapboxMapController extends MapboxGlPlatform
       {String? belowLayerId, String? sourceLayer}) async {
     await _addLayer(sourceId, layerId, properties, "raster",
         belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+  }
+
+  //? sync methods added specifically for web
+  @override
+  void setLayoutPropertySync(String layerId, String name, String value) {
+    _map.setLayoutProperty(layerId, name, value);
+  }
+
+  @override
+  LatLng toLatLngSync(Point screenLocation) {
+    var lngLat =
+        _map.unproject(mapbox.Point(screenLocation.x, screenLocation.y));
+    return LatLng(lngLat.lat as double, lngLat.lng as double);
+  }
+
+  @override
+  Line addLineSync(LineOptions options, [Map? data]) {
+    String lineId = lineManager.add(Feature(
+      geometry: Geometry(
+        type: 'LineString',
+        coordinates: options.geometry!
+            .map((latLng) => [latLng.longitude, latLng.latitude])
+            .toList(),
+      ),
+    ));
+    lineManager.update(lineId, options);
+    return Line(lineId, options, data);
+  }
+
+  @override
+  void updateLineSync(Line line, LineOptions changes) {
+    return lineManager.update(line.id, changes);
+  }
+
+  @override
+  Circle addCircleSync(CircleOptions options, [Map? data]) {
+    String circleId = circleManager.add(Feature(
+      geometry: Geometry(
+        type: 'Point',
+        coordinates: [options.geometry!.longitude, options.geometry!.latitude],
+      ),
+    ));
+    circleManager.update(circleId, options);
+    return Circle(circleId, options, data);
+  }
+
+  @override
+  void updateCircleSync(Circle circle, CircleOptions changes) {
+    circleManager.update(circle.id, changes);
+  }
+
+  @override
+  void removeCircleSync(String circleId) {
+    circleManager.remove(circleId);
+  }
+
+  @override
+  void addGeoJsonSourceSync(String sourceId, Map<String, dynamic> geojson, {String? promoteId}) {
+    _map.addSource(sourceId, {
+      "type": 'geojson',
+      "data": geojson,
+      if (promoteId != null) "promoteId": promoteId
+    });
+  }
+
+  @override
+  void setGeoJsonSourceSync(String sourceId, Map<String, dynamic> geojson) {
+    final source = _map.getSource(sourceId) as GeoJsonSource;
+    final data = FeatureCollection(features: [
+      for (final f in geojson["features"] ?? [])
+        Feature(
+            geometry: Geometry(
+                type: f["geometry"]["type"],
+                coordinates: f["geometry"]["coordinates"]),
+            properties: f["properties"],
+            id: f["id"])
+    ]);
+    source.setData(data);
+  }
+
+  @override
+  bool sourceExistsSync(String sourceId) {
+    final source = _map.getSource(sourceId);
+    return source != null;
+  }
+
+  @override
+  bool layerExistsSync(String layerId) {
+    final layer = _map.getLayer(layerId);
+    return layer != null;
+  }
+
+  @override
+  bool setSourceUrlSync(String sourceId, String url) {    
+    final jsObject = _map.jsObject.getSource(sourceId);
+    if (jsObject != null) {
+      final source = VectorSource.fromJsObject(jsObject);      
+      source.jsObject.tiles.setAll(0, [url]);
+      return true;
+    }
+    return false;    
+  }
+
+  @override
+  void resizeSync() {
+    _map.resize(); 
   }
 }
