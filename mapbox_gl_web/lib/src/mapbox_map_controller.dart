@@ -815,46 +815,46 @@ class MapboxMapController extends MapboxGlPlatform
   @override
   Future<void> addCircleLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     return _addLayer(sourceId, layerId, properties, "circle",
-        belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+        belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
   }
 
   @override
   Future<void> addFillLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     return _addLayer(sourceId, layerId, properties, "fill",
-        belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+        belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
   }
 
   @override
   Future<void> addLineLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     return _addLayer(sourceId, layerId, properties, "line",
-        belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+        belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
   }
 
   @override
   Future<void> addSymbolLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     return _addLayer(sourceId, layerId, properties, "symbol",
-        belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+        belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
   }
 
   @override
   Future<void> addHillshadeLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     return _addLayer(sourceId, layerId, properties, "hillshade",
-        belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+        belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
   }
 
   Future<void> _addLayer(String sourceId, String layerId,
       Map<String, dynamic> properties, String layerType,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     final layout = Map.fromEntries(
         properties.entries.where((entry) => isLayoutProperty(entry.key)));
     final paint = Map.fromEntries(
@@ -864,6 +864,7 @@ class MapboxMapController extends MapboxGlPlatform
       'id': layerId,
       'type': layerType,
       'source': sourceId,
+      if (filter != null) 'filter': filter,
       'layout': layout,
       'paint': paint,
       if (sourceLayer != null) 'source-layer': sourceLayer
@@ -948,9 +949,9 @@ class MapboxMapController extends MapboxGlPlatform
   @override
   Future<void> addRasterLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _addLayer(sourceId, layerId, properties, "raster",
-        belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+        belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
   }
 
   //? sync methods added specifically for web

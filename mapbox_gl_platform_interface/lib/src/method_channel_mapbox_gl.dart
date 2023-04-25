@@ -755,7 +755,7 @@ class MethodChannelMapboxGl extends MapboxGlPlatform {
   @override
   Future<void> addSymbolLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _channel.invokeMethod('symbolLayer#add', <String, dynamic>{
       'sourceId': sourceId,
       'layerId': layerId,
@@ -769,7 +769,7 @@ class MethodChannelMapboxGl extends MapboxGlPlatform {
   @override
   Future<void> addLineLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _channel.invokeMethod('lineLayer#add', <String, dynamic>{
       'sourceId': sourceId,
       'layerId': layerId,
@@ -783,7 +783,7 @@ class MethodChannelMapboxGl extends MapboxGlPlatform {
   @override
   Future<void> addCircleLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _channel.invokeMethod('circleLayer#add', <String, dynamic>{
       'sourceId': sourceId,
       'layerId': layerId,
@@ -797,7 +797,7 @@ class MethodChannelMapboxGl extends MapboxGlPlatform {
   @override
   Future<void> addFillLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _channel.invokeMethod('fillLayer#add', <String, dynamic>{
       'sourceId': sourceId,
       'layerId': layerId,
@@ -825,7 +825,7 @@ class MethodChannelMapboxGl extends MapboxGlPlatform {
   @override
   Future<void> addRasterLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _channel.invokeMethod('rasterLayer#add', <String, dynamic>{
       'sourceId': sourceId,
       'layerId': layerId,
@@ -838,7 +838,7 @@ class MethodChannelMapboxGl extends MapboxGlPlatform {
   @override
   Future<void> addHillshadeLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _channel.invokeMethod('hillshadeLayer#add', <String, dynamic>{
       'sourceId': sourceId,
       'layerId': layerId,

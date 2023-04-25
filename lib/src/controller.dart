@@ -321,13 +321,14 @@ class MapboxMapController extends ChangeNotifier {
   /// Note: [belowLayerId] is currently ignored on the web
   Future<void> addSymbolLayer(
       String sourceId, String layerId, SymbolLayerProperties properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _mapboxGlPlatform.addSymbolLayer(
       sourceId,
       layerId,
-      properties.toJson(),
+      properties.toJson(),      
       belowLayerId: belowLayerId,
       sourceLayer: sourceLayer,
+      filter: filter,
     );
   }
 
@@ -339,13 +340,14 @@ class MapboxMapController extends ChangeNotifier {
   /// Note: [belowLayerId] is currently ignored on the web
   Future<void> addLineLayer(
       String sourceId, String layerId, LineLayerProperties properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _mapboxGlPlatform.addLineLayer(
       sourceId,
       layerId,
       properties.toJson(),
       belowLayerId: belowLayerId,
       sourceLayer: sourceLayer,
+      filter: filter,
     );
   }
 
@@ -357,13 +359,14 @@ class MapboxMapController extends ChangeNotifier {
   /// Note: [belowLayerId] is currently ignored on the web
   Future<void> addFillLayer(
       String sourceId, String layerId, FillLayerProperties properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _mapboxGlPlatform.addFillLayer(
       sourceId,
       layerId,
       properties.toJson(),
       belowLayerId: belowLayerId,
       sourceLayer: sourceLayer,
+      filter: filter,
     );
   }
 
@@ -375,13 +378,14 @@ class MapboxMapController extends ChangeNotifier {
   /// Note: [belowLayerId] is currently ignored on the web
   Future<void> addCircleLayer(
       String sourceId, String layerId, CircleLayerProperties properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _mapboxGlPlatform.addCircleLayer(
       sourceId,
       layerId,
       properties.toJson(),
       belowLayerId: belowLayerId,
       sourceLayer: sourceLayer,
+      filter: filter,
     );
   }
 
@@ -393,25 +397,27 @@ class MapboxMapController extends ChangeNotifier {
   /// Note: [belowLayerId] is currently ignored on the web
   Future<void> addRasterLayer(
       String sourceId, String layerId, RasterLayerProperties properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _mapboxGlPlatform.addRasterLayer(
       sourceId,
       layerId,
       properties.toJson(),
       belowLayerId: belowLayerId,
       sourceLayer: sourceLayer,
+      filter: filter,
     );
   }
 
   Future<void> addHillshadeLayer(
       String sourceId, String layerId, HillshadeLayerProperties properties,
-      {String? belowLayerId, String? sourceLayer}) async {
+      {String? belowLayerId, String? sourceLayer, List<dynamic>? filter}) async {
     await _mapboxGlPlatform.addHillshadeLayer(
       sourceId,
       layerId,
       properties.toJson(),
       belowLayerId: belowLayerId,
       sourceLayer: sourceLayer,
+      filter: filter,
     );
   }
 
@@ -1033,25 +1039,26 @@ class MapboxMapController extends ChangeNotifier {
       String sourceId, String layerId, LayerProperties properties,
       {String? belowLayerId,
       bool enableInteraction = true,
-      String? sourceLayer}) async {
+      String? sourceLayer,
+      List<dynamic>? filter}) async {
     if (properties is FillLayerProperties) {
       addFillLayer(sourceId, layerId, properties,
-          belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+          belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
     } else if (properties is LineLayerProperties) {
       addLineLayer(sourceId, layerId, properties,
-          belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+          belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
     } else if (properties is SymbolLayerProperties) {
       addSymbolLayer(sourceId, layerId, properties,
-          belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+          belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
     } else if (properties is CircleLayerProperties) {
       addCircleLayer(sourceId, layerId, properties,
-          belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+          belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
     } else if (properties is RasterLayerProperties) {
       addRasterLayer(sourceId, layerId, properties,
-          belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+          belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
     } else if (properties is HillshadeLayerProperties) {
       addHillshadeLayer(sourceId, layerId, properties,
-          belowLayerId: belowLayerId, sourceLayer: sourceLayer);
+          belowLayerId: belowLayerId, sourceLayer: sourceLayer, filter: filter);
     } else {
       throw UnimplementedError("Unknown layer type $properties");
     }
@@ -1116,8 +1123,9 @@ class MapboxMapController extends ChangeNotifier {
       String sourceId, String layerId, LayerProperties properties,
       {String? belowLayerId,
       bool enableInteraction = true,
-      String? sourceLayer}) {
-    addLayer(sourceId, layerId, properties, belowLayerId: belowLayerId, enableInteraction: enableInteraction, sourceLayer: sourceLayer);
+      String? sourceLayer,
+      List<dynamic>? filter}) {
+    addLayer(sourceId, layerId, properties, belowLayerId: belowLayerId, enableInteraction: enableInteraction, sourceLayer: sourceLayer, filter: filter);
   }
 
   bool sourceExistsSync(String sourceId) => _mapboxGlPlatform.sourceExistsSync(sourceId);
